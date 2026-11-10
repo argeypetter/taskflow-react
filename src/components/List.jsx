@@ -1,36 +1,106 @@
+
 import { task } from '../data/data.js';
 import TaskItem from './TaskItem.jsx';
-import { useState } from 'react';
+import TaskModal from './TaskForm.jsx';
+import { useState, useEffect } from 'react';
 
 export default function List() {
 
-    const [aux, setAux] = useState(task);
+    // Controla la visibilidad del modal.
+    // false = cerrado, true = abierto.
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
+    // Inicializa el estado recuperando las tareas de localStorage.
+    // Esta función solo se ejecuta al inicializar el estado.
+    const [aux, setAux] = useState(() => {
+        const datos = localStorage.getItem('tasks');
+
+        // Si existen tareas guardadas, convierte el texto en un array.
+        if (datos) {
+            return JSON.parse(datos);
+        }
+
+        // Si no existen datos guardados, utiliza las tareas iniciales.
+        return task;
+    });
+
+    // Sincroniza la lista de tareas con localStorage.
+    // Se ejecuta al montar el componente y cada vez que cambia aux.
+    useEffect(() => {
+        localStorage.setItem('tasks', JSON.stringify(aux));
+    }, [aux]);
+
+    // Cambia el estado de una tarea según su identificador.
     const handleClick = (id) => {
+
+        // map crea un nuevo array sin modificar el original.
         const listAux = aux.map(d => {
+
+            // Comprueba si la tarea actual coincide con el ID recibido.
             if (d.id === id) {
                 return {
                     ...d,
-                    estado: d.estado === "Pendiente" ? "Completada" : "Pendiente"
+
+                    // Alterna entre Pendiente y Completada.
+                    estado: d.estado === "Pendiente"
+                        ? "Completada"
+                        : "Pendiente"
                 };
             }
 
+            // Mantiene las tareas que no coinciden con el ID.
             return d;
         });
-        setAux(listAux)
+
+        // Actualiza el estado con el nuevo array.
+        setAux(listAux);
+    };
+
+    // Recibe una nueva tarea desde TaskModal y la agrega a la lista.
+    const handleAddTask = (newTask) => {
+
+        // Conserva las tareas anteriores y agrega la nueva.
+        setAux(prevTasks => [
+            ...prevTasks,
+            newTask
+        ]);
+    };
+
+    // Abre el modal actualizando su estado de visibilidad.
+    const abrirModal = () => {
+        setIsModalOpen(true);
+    };
+
+    // Cierra el modal actualizando su estado de visibilidad.
+    const cerrarModal = () => {
+        setIsModalOpen(false);
     };
 
     return (
-        <ul>
-            {aux.map(dat => (
-                <TaskItem
-                    key={dat.id}
-                    dat={dat}
-                    handleClick={handleClick}
+        <>
+            {/* Botón para abrir el formulario de nuevas tareas */}
+            <button onClick={abrirModal}>
+                Abrir Modal
+            </button>
+
+            {/* Renderiza la lista de tareas */}
+            <ul>
+                {aux.map(dat => (
+                    <TaskItem
+                        key={dat.id}
+                        dat={dat}
+                        handleClick={handleClick}
+                    />
+                ))}
+            </ul>
+
+            {/* Renderizado condicional del formulario */}
+            {isModalOpen && (
+                <TaskModal
+                    onClose={cerrarModal}
+                    onAddTask={handleAddTask}
                 />
-            ))}
-        </ul>
-        
+            )}
+        </>
     );
 }
-
