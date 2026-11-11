@@ -17,7 +17,11 @@ export default function List() {
 
         // Si existen tareas guardadas, convierte el texto en un array.
         if (datos) {
-            return JSON.parse(datos);
+            try {
+                return JSON.parse(datos);
+            } catch (error) {
+                console.error("Error al recuperar las tareas:", error);
+            }
         }
 
         // Si no existen datos guardados, utiliza las tareas iniciales.
@@ -33,10 +37,11 @@ export default function List() {
     // Cambia el estado de una tarea según su identificador.
     const handleClick = (id) => {
 
-        // map crea un nuevo array sin modificar el original.
-        const listAux = aux.map(d => {
-
-            // Comprueba si la tarea actual coincide con el ID recibido.
+        // Actualiza el estado con el nuevo array.
+        setAux(prevTasks =>
+            prevTasks.map(d => {
+                // Tu lógica actual
+                // Comprueba si la tarea actual coincide con el ID recibido.
             if (d.id === id) {
                 return {
                     ...d,
@@ -50,10 +55,8 @@ export default function List() {
 
             // Mantiene las tareas que no coinciden con el ID.
             return d;
-        });
-
-        // Actualiza el estado con el nuevo array.
-        setAux(listAux);
+            })
+        );
     };
 
     // Recibe una nueva tarea desde TaskModal y la agrega a la lista.
@@ -76,6 +79,12 @@ export default function List() {
         setIsModalOpen(false);
     };
 
+    const onDelete = (id) => {
+        setAux(prevTasks =>
+            prevTasks.filter(d => d.id !== id)
+        );
+    };
+
     return (
         <>
             {/* Botón para abrir el formulario de nuevas tareas */}
@@ -90,6 +99,7 @@ export default function List() {
                         key={dat.id}
                         dat={dat}
                         handleClick={handleClick}
+                        onDelete={onDelete}
                     />
                 ))}
             </ul>

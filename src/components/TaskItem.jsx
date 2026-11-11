@@ -1,4 +1,4 @@
-export default function TaskItem({ dat, handleClick }) {
+export default function TaskItem({ dat, handleClick, onDelete }) {
     return (
         <li>
             {/* Nombre de la tarea */}
@@ -13,6 +13,10 @@ export default function TaskItem({ dat, handleClick }) {
             {/* Botón para cambiar el estado */}
             <button onClick={() => handleClick(dat.id)}>
                 Cambiar estado
+            </button>
+            {/* Botón para eliminar tarea */}
+            <button onClick={() => onDelete(dat.id)}>
+                Eliminar
             </button>
         </li>
     );
