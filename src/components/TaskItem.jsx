@@ -1,31 +1,45 @@
 export default function TaskItem({ dat, handleClick, onDelete }) {
     return (
-        <li>
-            {/* Nombre de la tarea */}
-            <p>{dat.nombre}</p>
+        <li className="task-card">
+            <p className="task-name">{dat.nombre}</p>
 
-            {/* Prioridad */}
-            <p>Prioridad: {dat.prioridad}</p>
+            <p className="task-priority">
+                Prioridad: {dat.prioridad}
+            </p>
 
-            {/* Estado de la tarea */}
             <Item estado={dat.estado} />
 
-            {/* Botón para cambiar el estado */}
-            <button onClick={() => handleClick(dat.id)}>
-                Cambiar estado
-            </button>
-            {/* Botón para eliminar tarea */}
-            <button onClick={() => onDelete(dat.id)}>
-                Eliminar
-            </button>
+            <div className="task-actions">
+                <button
+                    className="btn btn-primary"
+                    onClick={() => handleClick(dat.id)}
+                >
+                    Cambiar estado
+                </button>
+
+                <button
+                    className="btn btn-danger"
+                    onClick={() => onDelete(dat.id)}
+                >
+                    Eliminar
+                </button>
+            </div>
         </li>
     );
 }
 
 function Item({ estado }) {
     if (estado === "Completada") {
-        return <span className="item">Tarea finalizada ✅</span>;
+        return (
+            <span className="item completed">
+                Tarea finalizada ✅
+            </span>
+        );
     }
 
-    return <span className="item">Tarea por realizar</span>;
+    return (
+        <span className="item">
+            Tarea por realizar
+        </span>
+    );
 }

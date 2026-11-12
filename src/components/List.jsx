@@ -99,12 +99,6 @@ export default function List() {
         setStatusFiltro(estado)
     }
 
-    const tareasFiltradas = aux.filter(dat =>
-        dat.nombre.toLowerCase().includes(
-            searchTerm.toLowerCase()
-        )
-    );
-
     const resultado = aux.filter(dat => {
 
         const coincideNombre = dat.nombre.toLowerCase().includes(
@@ -119,21 +113,24 @@ export default function List() {
     });
     return (
         <>
-            {/* Busquedad de tareas */}
-            <TaskSearch
-                searchTerm={searchTerm}
-                onSearch={onSearch}
-                statusFiltro={statusFiltro}
-                onEstadoChange={onEstadoChange}
-            />
+            <div className="task-toolbar">
+                {/* Busquedad de tareas */}
+                <TaskSearch
+                    searchTerm={searchTerm}
+                    onSearch={onSearch}
+                    statusFiltro={statusFiltro}
+                    onEstadoChange={onEstadoChange}
+                />
 
-            {/* Botón para abrir el formulario de nuevas tareas */}
-            <button onClick={abrirModal}>
-                Abrir Modal
-            </button>
-
+                {/* Botón para abrir el formulario de nuevas tareas */}
+                <button
+                    className="btn-new-task"
+                    onClick={abrirModal}>
+                    + Nueva tarea
+                </button>
+            </div>
             {/* Renderiza la lista de tareas */}
-            <ul>
+            <ul className="task-list">
                 {resultado.map(dat => (
                     <TaskItem
                         key={dat.id}
