@@ -2,6 +2,7 @@
 import { task } from '../data/data.js';
 import TaskItem from './TaskItem.jsx';
 import TaskModal from './TaskForm.jsx';
+import TaskSearch from './TaskSearch.jsx';
 import { useState, useEffect } from 'react';
 
 export default function List() {
@@ -9,6 +10,9 @@ export default function List() {
     // Controla la visibilidad del modal.
     // false = cerrado, true = abierto.
     const [isModalOpen, setIsModalOpen] = useState(false);
+    //
+
+    const [searchTerm, setSearchTerm] = useState('')
 
     // Inicializa el estado recuperando las tareas de localStorage.
     // Esta función solo se ejecuta al inicializar el estado.
@@ -42,19 +46,19 @@ export default function List() {
             prevTasks.map(d => {
                 // Tu lógica actual
                 // Comprueba si la tarea actual coincide con el ID recibido.
-            if (d.id === id) {
-                return {
-                    ...d,
+                if (d.id === id) {
+                    return {
+                        ...d,
 
-                    // Alterna entre Pendiente y Completada.
-                    estado: d.estado === "Pendiente"
-                        ? "Completada"
-                        : "Pendiente"
-                };
-            }
+                        // Alterna entre Pendiente y Completada.
+                        estado: d.estado === "Pendiente"
+                            ? "Completada"
+                            : "Pendiente"
+                    };
+                }
 
-            // Mantiene las tareas que no coinciden con el ID.
-            return d;
+                // Mantiene las tareas que no coinciden con el ID.
+                return d;
             })
         );
     };
@@ -85,8 +89,24 @@ export default function List() {
         );
     };
 
+    const onSearch = (texto) => {
+        setSearchTerm(texto)
+    }
+
+    const tareasFiltradas = aux.filter(dat =>
+        dat.nombre.toLowerCase().includes(
+            searchTerm.toLowerCase()
+        )
+    );
+
     return (
         <>
+            {/* Busquedad de tareas */}
+            <TaskSearch
+                searchTerm={searchTerm}
+                onSearch={onSearch}
+            />
+
             {/* Botón para abrir el formulario de nuevas tareas */}
             <button onClick={abrirModal}>
                 Abrir Modal
@@ -94,7 +114,7 @@ export default function List() {
 
             {/* Renderiza la lista de tareas */}
             <ul>
-                {aux.map(dat => (
+                {tareasFiltradas.map(dat => (
                     <TaskItem
                         key={dat.id}
                         dat={dat}

@@ -49,10 +49,11 @@ export default function TaskModal({ onClose, onAddTask }) {
 
                     {/* Campo controlado para escribir el nombre */}
                     <input
-                        type="text"
+                        type="text" required
                         value={nombre}
                         onChange={(e) => setNombre(e.target.value)}
                         placeholder="Ej. Aprender React"
+                        maxLength={100}
                     />
 
                     <label>Prioridad</label>
