@@ -14,6 +14,8 @@ export default function List() {
 
     const [searchTerm, setSearchTerm] = useState('')
 
+    const [statusFiltro, setStatusFiltro] = useState('todos')
+
     // Inicializa el estado recuperando las tareas de localStorage.
     // Esta función solo se ejecuta al inicializar el estado.
     const [aux, setAux] = useState(() => {
@@ -93,18 +95,36 @@ export default function List() {
         setSearchTerm(texto)
     }
 
+    const onEstadoChange = (estado) => {
+        setStatusFiltro(estado)
+    }
+
     const tareasFiltradas = aux.filter(dat =>
         dat.nombre.toLowerCase().includes(
             searchTerm.toLowerCase()
         )
     );
 
+    const resultado = aux.filter(dat => {
+
+        const coincideNombre = dat.nombre.toLowerCase().includes(
+            /* ¿Qué variable contiene el texto buscado? */
+            searchTerm.toLowerCase()
+        );
+
+        const coincideEstado = statusFiltro === 'todos' || dat.estado === statusFiltro
+        /* ¿Cómo compruebas si se seleccionó todos o coincide el estado? */;
+
+        return coincideNombre && coincideEstado;
+    });
     return (
         <>
             {/* Busquedad de tareas */}
             <TaskSearch
                 searchTerm={searchTerm}
                 onSearch={onSearch}
+                statusFiltro={statusFiltro}
+                onEstadoChange={onEstadoChange}
             />
 
             {/* Botón para abrir el formulario de nuevas tareas */}
@@ -114,7 +134,7 @@ export default function List() {
 
             {/* Renderiza la lista de tareas */}
             <ul>
-                {tareasFiltradas.map(dat => (
+                {resultado.map(dat => (
                     <TaskItem
                         key={dat.id}
                         dat={dat}
