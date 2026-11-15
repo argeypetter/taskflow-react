@@ -1,5 +1,8 @@
 import Header from './components/Header.jsx';
-import List from './components/List.jsx';
+import Home from './pages/Home.jsx';
+import Tasks from './pages/Tasks.jsx';
+import NotFound from './pages/NotFound.jsx';
+import { Route , Routes } from 'react-router-dom';
 import './App.css';
 
 function App() {
@@ -8,8 +11,16 @@ function App() {
             <Header />
 
             <main className="app-main">
-                <h2 className="section-title">Mis tareas</h2>
-                <List />
+                <Routes>
+                    {/* Ruta principal */}
+                    <Route path="/" element={<Home />} />
+
+                    {/* Ruta de tareas */}
+                    <Route path="/tasks" element={<Tasks />} />
+
+                    {/* Ruta para páginas inexistentes */}
+                    <Route path="*" element={<NotFound />} />
+                </Routes>
             </main>
         </>
     );
