@@ -1,8 +1,11 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import '../css/TaskModal.css';
 
-export default function TaskModal({ onClose, onAddTask }) {
+export default function TaskModal({ onClose,
+    onAddTask,
+    onUpdateTask,
+    taskToEdit }) {
 
     // Almacena el nombre de la tarea escrita por el usuario.
     const [nombre, setNombre] = useState('');
@@ -12,36 +15,45 @@ export default function TaskModal({ onClose, onAddTask }) {
 
     // Procesa el envío del formulario.
     const handleSubmit = (e) => {
-
-        // Evita que el formulario recargue la página.
         e.preventDefault();
 
-        // Impide registrar tareas con nombres vacíos.
         if (!nombre.trim()) {
             return;
         }
 
-        // Envía la nueva tarea al componente padre mediante props.
-        onAddTask({
-            id: Date.now(),
-            nombre: nombre.trim(),
-            prioridad,
-            estado: 'Pendiente'
-        });
+        if (taskToEdit) {
+            onUpdateTask(
+                taskToEdit.id,
+                nombre.trim(),
+                prioridad
+            );
+        } else {
+            onAddTask({
+                id: Date.now(),
+                nombre: nombre.trim(),
+                prioridad,
+                estado: 'Pendiente'
+            });
+        }
 
-        // Limpia los campos después de registrar la tarea.
-        setNombre('');
-        setPrioridad('Media');
-
-        // Cierra el modal después de guardar.
         onClose();
     };
+
+    useEffect(() => {
+        if (taskToEdit) {
+            setNombre(taskToEdit.nombre);
+            setPrioridad(taskToEdit.prioridad);
+        } else {
+            setNombre('');
+            setPrioridad('Media');
+        }
+    }, [taskToEdit]);
 
     return (
         <div className="modal-overlay">
             <div className="modal-container">
 
-                <h2>Nueva tarea</h2>
+                <h2>{taskToEdit ? 'Editar tarea' : 'Nueva tarea'}</h2>
 
                 <form onSubmit={handleSubmit}>
 
@@ -77,7 +89,7 @@ export default function TaskModal({ onClose, onAddTask }) {
 
                         {/* Ejecuta handleSubmit */}
                         <button type="submit">
-                            Guardar tarea
+                            {taskToEdit ? 'Guardar cambios' : 'Crear tarea'}
                         </button>
 
                     </div>

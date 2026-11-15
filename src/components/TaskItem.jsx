@@ -1,4 +1,4 @@
-export default function TaskItem({ dat, handleClick, onDelete }) {
+export default function TaskItem({ dat, handleClick, onDelete, abrirModalEditar }) {
     return (
         <li className="task-card">
             <p className="task-name">{dat.nombre}</p>
@@ -22,6 +22,13 @@ export default function TaskItem({ dat, handleClick, onDelete }) {
                     onClick={() => onDelete(dat.id)}
                 >
                     Eliminar
+                </button>
+
+                <button
+                    className="btn btn-secondary"
+                    onClick={() => abrirModalEditar(dat)}
+                >
+                    Actualizar
                 </button>
             </div>
         </li>

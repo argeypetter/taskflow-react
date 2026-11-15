@@ -2,7 +2,7 @@
 import TaskItem from './TaskItem.jsx';
 import TaskModal from './TaskForm.jsx';
 import TaskSearch from './TaskSearch.jsx';
-import { useState} from 'react';
+import { useState } from 'react';
 import useTasks from '../hooks/useTasks.js';
 
 export default function List() {
@@ -10,30 +10,38 @@ export default function List() {
     // Controla la visibilidad del modal.
     // false = cerrado, true = abierto.
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [taskToEdit, setTaskToEdit] = useState(null);
     //
 
     const {
         // Aquí recuperas los datos y funciones de useTasks
-        aux, 
         resultado,
         handleClick,
         handleAddTask,
         onDelete,
+        handleUpdateTask,
 
         // Búsqueda y filtros
         searchTerm,
         statusFiltro,
         onSearch,
-        onEstadoChange} = useTasks();
+        onEstadoChange } = useTasks();
 
     // Abre el modal actualizando su estado de visibilidad.
     const abrirModal = () => {
+        setTaskToEdit(null);
         setIsModalOpen(true);
     };
 
     // Cierra el modal actualizando su estado de visibilidad.
     const cerrarModal = () => {
         setIsModalOpen(false);
+        setTaskToEdit(null);
+    };
+
+    const abrirModalEditar = (task) => {
+        setTaskToEdit(task);
+        setIsModalOpen(true);
     };
 
     return (
@@ -62,6 +70,7 @@ export default function List() {
                         dat={dat}
                         handleClick={handleClick}
                         onDelete={onDelete}
+                        abrirModalEditar={abrirModalEditar}
                     />
                 ))}
             </ul>
@@ -71,6 +80,8 @@ export default function List() {
                 <TaskModal
                     onClose={cerrarModal}
                     onAddTask={handleAddTask}
+                    onUpdateTask={handleUpdateTask}
+                    taskToEdit={taskToEdit}
                 />
             )}
         </>

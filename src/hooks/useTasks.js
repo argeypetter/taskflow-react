@@ -52,6 +52,27 @@ export default function useTasks() {
         );
     };
 
+    const handleUpdateTask = (id, nom, pr) => {
+        // Actualiza el estado con el nuevo array.
+        setAux(prevTasks =>
+            prevTasks.map(d => {
+                // Tu lógica actual
+                // Comprueba si la tarea actual coincide con el ID recibido.
+                if (d.id === id) {
+                    return {
+                        ...d,
+                        // Actualiza el nombre y la prioridad.
+                        nombre: nom,
+                        prioridad: pr
+                    };
+                }
+
+                // Mantiene las tareas que no coinciden con el ID.
+                return d;
+            })
+        );
+    };
+
     // Recibe una nueva tarea desde TaskModal y la agrega a la lista.
     const handleAddTask = (newTask) => {
 
@@ -100,6 +121,7 @@ export default function useTasks() {
         handleClick,
         handleAddTask,
         onDelete,
+        handleUpdateTask,
 
         // Búsqueda y filtros
         searchTerm,
