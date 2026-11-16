@@ -4,7 +4,7 @@ export default function TaskItem({ dat, handleClick, onDelete, abrirModalEditar 
             <p className="task-name">{dat.nombre}</p>
 
             <p className="task-priority">
-                Prioridad: {dat.prioridad}
+                <span>Prioridad: {obtenerPrioridad(dat.prioridad)}</span>
             </p>
 
             <Item estado={dat.estado} />
@@ -50,3 +50,13 @@ function Item({ estado }) {
         </span>
     );
 }
+
+const obtenerPrioridad = (prioridad) => {
+    const prioridades = {
+        "1": "Alta",
+        "2": "Media",
+        "3": "Baja"
+    };
+
+    return prioridades[prioridad] || "Sin prioridad";
+};

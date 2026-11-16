@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
-import { task } from '../data/data.js';
+import { getTasks } from '../services/taskService';
+import { createTask } from '../services/taskService';
+// import {task} from '../data/data.js'
 
 export default function useTasks() {
 
@@ -7,31 +9,58 @@ export default function useTasks() {
 
     const [statusFiltro, setStatusFiltro] = useState('todos')
 
-    const [aux, setAux] = useState(() => {
-        const datos = localStorage.getItem('tasks');
+    const [tasks, setTasks] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
-        // Si existen tareas guardadas, convierte el texto en un array.
-        if (datos) {
+    // const [aux, setAux] = useState(() => {
+    //     const datos = localStorage.getItem('tasks');
+
+    //     // Si existen tareas guardadas, convierte el texto en un array.
+    //     if (datos) {
+    //         try {
+    //             return JSON.parse(datos);
+    //         } catch (error) {
+    //             console.error("Error al recuperar las tareas:", error);
+    //         }
+    //     }
+
+    //     // Si no existen datos guardados, utiliza las tareas iniciales.
+    //     return task;
+    // });
+
+
+    useEffect(() => {
+
+        async function cargarTareas() {
             try {
-                return JSON.parse(datos);
+                setLoading(true);
+
+                const t = await getTasks();
+                setTasks(t);
+
             } catch (error) {
-                console.error("Error al recuperar las tareas:", error);
+                setError(error.message);
+
+            } finally {
+                setLoading(false);
             }
         }
 
-        // Si no existen datos guardados, utiliza las tareas iniciales.
-        return task;
-    });
+        cargarTareas();
 
-    useEffect(() => {
-        localStorage.setItem('tasks', JSON.stringify(aux));
-    }, [aux]);
+    }, []);
+
+
+    // useEffect(() => {
+    //     localStorage.setItem('tasks', JSON.stringify(aux));
+    // }, [aux]);
 
     // Cambia el estado de una tarea según su identificador.
     const handleClick = (id) => {
 
         // Actualiza el estado con el nuevo array.
-        setAux(prevTasks =>
+        setTasks(prevTasks =>
             prevTasks.map(d => {
                 // Tu lógica actual
                 // Comprueba si la tarea actual coincide con el ID recibido.
@@ -40,9 +69,9 @@ export default function useTasks() {
                         ...d,
 
                         // Alterna entre Pendiente y Completada.
-                        estado: d.estado === "Pendiente"
-                            ? "Completada"
-                            : "Pendiente"
+                        estado: d.estado === "1"
+                            ? "2"
+                            : "1"
                     };
                 }
 
@@ -54,7 +83,7 @@ export default function useTasks() {
 
     const handleUpdateTask = (id, nom, pr) => {
         // Actualiza el estado con el nuevo array.
-        setAux(prevTasks =>
+        setTasks(prevTasks =>
             prevTasks.map(d => {
                 // Tu lógica actual
                 // Comprueba si la tarea actual coincide con el ID recibido.
@@ -74,17 +103,30 @@ export default function useTasks() {
     };
 
     // Recibe una nueva tarea desde TaskModal y la agrega a la lista.
-    const handleAddTask = (newTask) => {
+    const handleAddTask = async (newTask) => {
 
         // Conserva las tareas anteriores y agrega la nueva.
-        setAux(prevTasks => [
-            ...prevTasks,
-            newTask
-        ]);
+        // setTasks(prevTasks => [
+        //     ...prevTasks,
+        //     newTask
+        // ]);
+
+        try {
+            const taskData = await createTask(newTask)
+            setTasks(prevTasks => [
+                ...prevTasks,
+                taskData
+            ]);
+
+        } catch (error) {
+             // Manejo de errores si la promesa falla
+        console.error('Ocurrió un error:', error);
+        }
+
     };
 
     const onDelete = (id) => {
-        setAux(prevTasks =>
+        setTasks(prevTasks =>
             prevTasks.filter(d => d.id !== id)
         );
     };
@@ -97,7 +139,7 @@ export default function useTasks() {
         setStatusFiltro(estado)
     }
 
-    const resultado = aux.filter(dat => {
+    const resultado = tasks.filter(dat => {
 
         const coincideNombre = dat.nombre.toLowerCase().includes(
             /* ¿Cómo compruebas si se seleccionó todos o coincide el estado? */
@@ -112,7 +154,6 @@ export default function useTasks() {
 
     return {
         // Estado de las tareas
-        aux,
 
         // Tareas filtradas
         resultado,
@@ -127,6 +168,12 @@ export default function useTasks() {
         searchTerm,
         statusFiltro,
         onSearch,
-        onEstadoChange
+        onEstadoChange,
+
+        //
+        tasks,
+        loading,
+        error,
+
     };
 }

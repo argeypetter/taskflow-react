@@ -25,7 +25,12 @@ export default function List() {
         searchTerm,
         statusFiltro,
         onSearch,
-        onEstadoChange } = useTasks();
+        onEstadoChange,
+        tasks,
+        loading,
+        error
+
+    } = useTasks();
 
     // Abre el modal actualizando su estado de visibilidad.
     const abrirModal = () => {
@@ -63,7 +68,7 @@ export default function List() {
                 </button>
             </div>
             {/* Renderiza la lista de tareas */}
-            <ul className="task-list">
+            {/* <ul className="task-list">
                 {resultado.map(dat => (
                     <TaskItem
                         key={dat.id}
@@ -73,7 +78,33 @@ export default function List() {
                         abrirModalEditar={abrirModalEditar}
                     />
                 ))}
-            </ul>
+            </ul> */}
+
+
+            {loading ? (
+                <p>Cargando tareas...</p>
+            ) : error ? (
+                <p role="alert">Error: {error}</p>
+            ) : resultado.length === 0 ? (
+                <p>
+                    {tasks.length === 0
+                        ? 'Todavía no hay tareas registradas.'
+                        : 'No se encontraron tareas.'}
+                </p>
+            ) : (
+                <ul className="task-list">
+                    {resultado.map(dat => (
+                        <TaskItem
+                            key={dat.id}
+                            dat={dat}
+                            handleClick={handleClick}
+                            onDelete={onDelete}
+                            abrirModalEditar={abrirModalEditar}
+                        />
+                    ))}
+                </ul>
+            )}
+
 
             {/* Renderizado condicional del formulario */}
             {isModalOpen && (

@@ -11,7 +11,10 @@ export default function TaskModal({ onClose,
     const [nombre, setNombre] = useState('');
 
     // Almacena la prioridad seleccionada.
-    const [prioridad, setPrioridad] = useState('Media');
+    const [prioridad, setPrioridad] = useState('2');
+
+    // Almacena la descripcion de la tarea escrita por el usuario.
+    const [descripcion, setDescripcion] = useState('')
 
     // Procesa el envío del formulario.
     const handleSubmit = (e) => {
@@ -25,14 +28,15 @@ export default function TaskModal({ onClose,
             onUpdateTask(
                 taskToEdit.id,
                 nombre.trim(),
-                prioridad
+                prioridad,
+                descripcion
             );
         } else {
             onAddTask({
-                id: Date.now(),
                 nombre: nombre.trim(),
-                prioridad,
-                estado: 'Pendiente'
+                descripcion: descripcion,
+                prioridad: prioridad,
+                estado: '1'
             });
         }
 
@@ -42,10 +46,12 @@ export default function TaskModal({ onClose,
     useEffect(() => {
         if (taskToEdit) {
             setNombre(taskToEdit.nombre);
+            setDescripcion(taskToEdit.descripcion);
             setPrioridad(taskToEdit.prioridad);
         } else {
             setNombre('');
-            setPrioridad('Media');
+            setDescripcion('');
+            setPrioridad('2');
         }
     }, [taskToEdit]);
 
@@ -68,6 +74,15 @@ export default function TaskModal({ onClose,
                         maxLength={100}
                     />
 
+                    {/*Campo controla la descripcion */}
+                    <textarea
+                        id="descripcion"
+                        name="descripcion"
+                        value={descripcion}
+                        onChange={(e) => setDescripcion(e.target.value)}
+                        placeholder="Describe la tarea..."
+                    />
+
                     <label>Prioridad</label>
 
                     {/* Campo controlado para seleccionar prioridad */}
@@ -75,9 +90,9 @@ export default function TaskModal({ onClose,
                         value={prioridad}
                         onChange={(e) => setPrioridad(e.target.value)}
                     >
-                        <option value="Baja">Baja</option>
-                        <option value="Media">Media</option>
-                        <option value="Alta">Alta</option>
+                        <option value="1">Alta</option>
+                        <option value="2">Media</option>
+                        <option value="3">Baja</option>
                     </select>
 
                     <div className="modal-actions">
