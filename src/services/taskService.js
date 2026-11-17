@@ -8,13 +8,13 @@ export async function getTasks() {
         } else {
             const task = await respuesta.json();
             console.log(task);
-            return task
+            return task;
         }
 
     } catch (error) {
         // Manejo de errores si la promesa falla
         console.error('Ocurrió un error:', error);
-    }
+    };
 }
 
 
@@ -42,6 +42,59 @@ export async function createTask(taskData) {
         const taskNew = await respuesta.json();
 
         return taskNew;
+
+    } catch (error) {
+        console.error('Ocurrió un error:', error);
+        throw error;
+    };
+}
+
+export async function updateTask(taskData) {
+    try {
+        const respuesta = await fetch(
+            `http://127.0.0.1:8000/api/tasks/${taskData.id}/`,
+            {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(taskData)
+            }
+        );
+
+        if (!respuesta.ok) {
+            const detalle = await respuesta.json();
+
+            console.error('Errores enviados por Django:', detalle);
+
+            throw new Error('No se pudo actualizar la tarea');
+        };
+
+        const taskUpdate = await respuesta.json();
+
+        return taskUpdate;
+
+    } catch (error) {
+        console.error('Ocurrió un error:', error);
+        throw error;
+    };
+}
+
+
+export async function deleteTask(id) {
+    try {
+        const respuesta = await fetch(
+            `http://127.0.0.1:8000/api/tasks/${id}/`,
+            {
+                method: 'DELETE'
+            }
+        );
+
+        if (!respuesta.ok) {
+            throw new Error('No se pudo eliminar la tarea');
+        }
+
+        return true;
 
     } catch (error) {
         console.error('Ocurrió un error:', error);

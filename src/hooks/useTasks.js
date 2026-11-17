@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { getTasks } from '../services/taskService';
+import { deleteTask, getTasks, updateTask } from '../services/taskService';
 import { createTask } from '../services/taskService';
 // import {task} from '../data/data.js'
 
@@ -57,49 +57,51 @@ export default function useTasks() {
     // }, [aux]);
 
     // Cambia el estado de una tarea según su identificador.
-    const handleClick = (id) => {
+    const handleClick = async (dat) => {
 
-        // Actualiza el estado con el nuevo array.
-        setTasks(prevTasks =>
-            prevTasks.map(d => {
-                // Tu lógica actual
-                // Comprueba si la tarea actual coincide con el ID recibido.
-                if (d.id === id) {
-                    return {
-                        ...d,
+        try {
+            const taskU = await updateTask(dat);
+            // Actualiza el estado con el nuevo array.
+            setTasks(prevTasks =>
+                prevTasks.map(d => {
+                    // Tu lógica actual
+                    // Comprueba si la tarea actual coincide con el ID recibido.
+                    if (d.id === taskU.id) {
+                        return {
+                            ...d,
 
-                        // Alterna entre Pendiente y Completada.
-                        estado: d.estado === "1"
-                            ? "2"
-                            : "1"
-                    };
-                }
+                            // Alterna entre Pendiente y Completada.
+                            estado: taskU.estado === "1"
+                                ? "2"
+                                : "1"
+                        };
+                    }
 
-                // Mantiene las tareas que no coinciden con el ID.
-                return d;
-            })
-        );
+                    // Mantiene las tareas que no coinciden con el ID.
+                    return d;
+                })
+            );
+        } catch (error) {
+            console.error('Error al cambiar el estado:', error);
+        }
+
     };
 
-    const handleUpdateTask = (id, nom, pr) => {
-        // Actualiza el estado con el nuevo array.
-        setTasks(prevTasks =>
-            prevTasks.map(d => {
-                // Tu lógica actual
-                // Comprueba si la tarea actual coincide con el ID recibido.
-                if (d.id === id) {
-                    return {
-                        ...d,
-                        // Actualiza el nombre y la prioridad.
-                        nombre: nom,
-                        prioridad: pr
-                    };
-                }
+    const handleUpdateTask = async (taskUpdate) => {
+        try {
+            const taskU = await updateTask(taskUpdate);
 
-                // Mantiene las tareas que no coinciden con el ID.
-                return d;
-            })
-        );
+            setTasks(prevTasks =>
+                prevTasks.map(d =>
+                    d.id === taskU.id
+                        ? { ...d, ...taskU }
+                        : d
+                )
+            );
+
+        } catch (error) {
+            console.error('Error al actualizar la tarea:', error);
+        }
     };
 
     // Recibe una nueva tarea desde TaskModal y la agrega a la lista.
@@ -119,16 +121,23 @@ export default function useTasks() {
             ]);
 
         } catch (error) {
-             // Manejo de errores si la promesa falla
-        console.error('Ocurrió un error:', error);
+            // Manejo de errores si la promesa falla
+            console.error('Ocurrió un error:', error);
         }
 
     };
 
-    const onDelete = (id) => {
-        setTasks(prevTasks =>
-            prevTasks.filter(d => d.id !== id)
-        );
+    const onDelete = async (id) => {
+        try {
+            await deleteTask(id);
+
+            setTasks(prevTasks =>
+                prevTasks.filter(d => d.id !== id)
+            );
+
+        } catch (error) {
+            console.error('Ocurrió un error:', error);
+        }
     };
 
     const onSearch = (texto) => {

@@ -33,8 +33,8 @@ export default function TaskSearch({
                     onChange={(e) => onEstadoChange(e.target.value)}
                 >
                     <option value="todos">Todas las tareas</option>
-                    <option value="Pendiente">Pendientes</option>
-                    <option value="Completada">Completadas</option>
+                    <option value="1">Pendientes</option>
+                    <option value="2">Completadas</option>
                 </select>
             </div>
 

@@ -7,12 +7,16 @@ export default function TaskItem({ dat, handleClick, onDelete, abrirModalEditar 
                 <span>Prioridad: {obtenerPrioridad(dat.prioridad)}</span>
             </p>
 
+            <p className="task-description">
+                <span>{dat.descripcion}</span>
+            </p>
+
             <Item estado={dat.estado} />
 
             <div className="task-actions">
                 <button
                     className="btn btn-primary"
-                    onClick={() => handleClick(dat.id)}
+                    onClick={() => handleClick(dat)}
                 >
                     Cambiar estado
                 </button>
@@ -36,7 +40,8 @@ export default function TaskItem({ dat, handleClick, onDelete, abrirModalEditar 
 }
 
 function Item({ estado }) {
-    if (estado === "Completada") {
+
+    if (estado === "2") {
         return (
             <span className="item completed">
                 Tarea finalizada ✅

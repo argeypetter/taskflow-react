@@ -25,12 +25,12 @@ export default function TaskModal({ onClose,
         }
 
         if (taskToEdit) {
-            onUpdateTask(
-                taskToEdit.id,
-                nombre.trim(),
-                prioridad,
-                descripcion
-            );
+            onUpdateTask({
+                id: taskToEdit.id,
+                nombre: nombre.trim(),
+                descripcion: descripcion,
+                prioridad: prioridad
+            });
         } else {
             onAddTask({
                 nombre: nombre.trim(),

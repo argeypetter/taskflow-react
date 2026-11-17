@@ -83,6 +83,12 @@ main h2 {
     font-size: 0.9rem;
 }
 
+.task-description{
+    margin: 0;
+    color: #475569;
+    font-size: 0.9rem;
+}
+
 /* Estado */
 .item {
     display: inline-flex;
