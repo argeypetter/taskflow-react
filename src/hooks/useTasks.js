@@ -58,33 +58,28 @@ export default function useTasks() {
 
     // Cambia el estado de una tarea según su identificador.
     const handleClick = async (dat) => {
-
         try {
-            const taskU = await updateTask(dat);
-            // Actualiza el estado con el nuevo array.
+            // Calculamos el nuevo estado.
+            const nuevoEstado = dat.estado === "1" ? "2" : "1";
+
+            // Enviamos el nuevo estado a Django.
+            const taskU = await updateTask({
+                ...dat,
+                estado: nuevoEstado
+            });
+
+            // Actualizamos React con la respuesta del servidor.
             setTasks(prevTasks =>
-                prevTasks.map(d => {
-                    // Tu lógica actual
-                    // Comprueba si la tarea actual coincide con el ID recibido.
-                    if (d.id === taskU.id) {
-                        return {
-                            ...d,
-
-                            // Alterna entre Pendiente y Completada.
-                            estado: taskU.estado === "1"
-                                ? "2"
-                                : "1"
-                        };
-                    }
-
-                    // Mantiene las tareas que no coinciden con el ID.
-                    return d;
-                })
+                prevTasks.map(d =>
+                    d.id === taskU.id
+                        ? { ...d, ...taskU }
+                        : d
+                )
             );
+
         } catch (error) {
             console.error('Error al cambiar el estado:', error);
         }
-
     };
 
     const handleUpdateTask = async (taskUpdate) => {
