@@ -5,15 +5,15 @@ export async function getTasks() {
     try {
         const respuesta = await fetch(`${API_URL}/tasks/`);
 
-        if (!respuesta.ok) {
-            throw new Error(
-                `Error al consultar las tareas. Código: ${respuesta.status}`
-            );
-        }
+        // if (!respuesta.ok) {
+        //     throw new Error(
+        //         `Error al consultar las tareas. Código: ${respuesta.status}`
+        //     );
+        // }
+        // const tasks = await respuesta.json();
+        // return tasks;
 
-        const tasks = await respuesta.json();
-
-        return tasks;
+        return handleResponse(respuesta);
 
     } catch (error) {
         console.error('Ocurrió un error:', error);
@@ -35,17 +35,15 @@ export async function createTask(taskData) {
             }
         );
 
-        if (!respuesta.ok) {
-            const detalle = await respuesta.json();
+        // if (!respuesta.ok) {
+        //     const detalle = await respuesta.json();
+        //     console.error('Errores enviados por Django:', detalle);
+        //     throw new Error('No se pudo crear la tarea');
+        // }
+        // const taskNew = await respuesta.json();
+        // return taskNew;
 
-            console.error('Errores enviados por Django:', detalle);
-
-            throw new Error('No se pudo crear la tarea');
-        }
-
-        const taskNew = await respuesta.json();
-
-        return taskNew;
+        return handleResponse(respuesta);
 
     } catch (error) {
         console.error('Ocurrió un error:', error);
@@ -66,17 +64,15 @@ export async function updateTask(taskData) {
             }
         );
 
-        if (!respuesta.ok) {
-            const detalle = await respuesta.json();
+        // if (!respuesta.ok) {
+        //     const detalle = await respuesta.json();
+        //     console.error('Errores enviados por Django:', detalle);
+        //     throw new Error('No se pudo actualizar la tarea');
+        // };
+        // const taskUpdate = await respuesta.json();
+        // return taskUpdate;
 
-            console.error('Errores enviados por Django:', detalle);
-
-            throw new Error('No se pudo actualizar la tarea');
-        };
-
-        const taskUpdate = await respuesta.json();
-
-        return taskUpdate;
+        return handleResponse(respuesta);
 
     } catch (error) {
         console.error('Ocurrió un error:', error);
@@ -94,9 +90,11 @@ export async function deleteTask(id) {
             }
         );
 
-        if (!respuesta.ok) {
-            throw new Error('No se pudo eliminar la tarea');
-        }
+        // if (!respuesta.ok) {
+        //     throw new Error('No se pudo eliminar la tarea');
+        // }
+
+        await handleResponse(respuesta);
 
         return true;
 
@@ -104,4 +102,28 @@ export async function deleteTask(id) {
         console.error('Ocurrió un error:', error);
         throw error;
     }
+}
+
+async function handleResponse(respuesta) {
+    if (!respuesta.ok) {
+        let detalle;
+
+        try {
+            detalle = await respuesta.json();
+        } catch {
+            detalle = 'No se pudo interpretar la respuesta del servidor';
+        }
+
+        throw new Error(JSON.stringify({
+            status: respuesta.status,
+            detalle: detalle
+        }));
+    }
+
+    // Si Django devuelve 204 No Content
+    if (respuesta.status === 204) {
+        return null;
+    }
+
+    return respuesta.json();
 }

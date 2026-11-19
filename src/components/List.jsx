@@ -90,9 +90,8 @@ export default function List() {
                     <button
                         className="btn btn-primary"
                         onClick={loadTasks}
-                        disabled={loading}
                     >
-                        {loading ? 'Cargando...' : 'Reintentar'}
+                        Reintentar
                     </button>
                 </div>
             ) : resultado.length === 0 ? (
