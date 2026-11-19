@@ -28,7 +28,8 @@ export default function List() {
         onEstadoChange,
         tasks,
         loading,
-        error
+        error,
+        loadTasks
 
     } = useTasks();
 
@@ -84,7 +85,16 @@ export default function List() {
             {loading ? (
                 <p>Cargando tareas...</p>
             ) : error ? (
-                <p role="alert">Error: {error}</p>
+                <div>
+                    <p role="alert">Error: {error}</p>
+                    <button
+                        className="btn btn-primary"
+                        onClick={loadTasks}
+                        disabled={loading}
+                    >
+                        {loading ? 'Cargando...' : 'Reintentar'}
+                    </button>
+                </div>
             ) : resultado.length === 0 ? (
                 <p>
                     {tasks.length === 0

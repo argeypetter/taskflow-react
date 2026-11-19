@@ -1,27 +1,31 @@
+const API_URL = import.meta.env.VITE_API_URL;
+
 // Declarar una función asíncrona
 export async function getTasks() {
     try {
-        // await pausa esta línea hasta que fetch responda
-        const respuesta = await fetch('http://127.0.0.1:8000/api/tasks/');
+        const respuesta = await fetch(`${API_URL}/tasks/`);
+
         if (!respuesta.ok) {
-            throw new Error('Error al consultar las tareas');
-        } else {
-            const task = await respuesta.json();
-            console.log(task);
-            return task;
+            throw new Error(
+                `Error al consultar las tareas. Código: ${respuesta.status}`
+            );
         }
 
+        const tasks = await respuesta.json();
+
+        return tasks;
+
     } catch (error) {
-        // Manejo de errores si la promesa falla
         console.error('Ocurrió un error:', error);
-    };
+        throw error;
+    }
 }
 
 
 export async function createTask(taskData) {
     try {
         const respuesta = await fetch(
-            'http://127.0.0.1:8000/api/tasks/',
+            `${API_URL}/tasks/`,
             {
                 method: 'POST',
                 headers: {
@@ -52,7 +56,7 @@ export async function createTask(taskData) {
 export async function updateTask(taskData) {
     try {
         const respuesta = await fetch(
-            `http://127.0.0.1:8000/api/tasks/${taskData.id}/`,
+            `${API_URL}/tasks/${taskData.id}/`,
             {
                 method: 'PATCH',
                 headers: {
@@ -84,7 +88,7 @@ export async function updateTask(taskData) {
 export async function deleteTask(id) {
     try {
         const respuesta = await fetch(
-            `http://127.0.0.1:8000/api/tasks/${id}/`,
+            `${API_URL}/tasks/${id}/`,
             {
                 method: 'DELETE'
             }

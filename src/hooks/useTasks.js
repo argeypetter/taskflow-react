@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { deleteTask, getTasks, updateTask } from '../services/taskService';
 import { createTask } from '../services/taskService';
 // import {task} from '../data/data.js'
@@ -30,31 +30,58 @@ export default function useTasks() {
     // });
 
 
-    useEffect(() => {
+    // useEffect(() => {
 
-        async function cargarTareas() {
-            try {
-                setLoading(true);
+    //     async function loadTasks() {
+    //         try {
+    //             setLoading(true);
+    //             setError(null);
 
-                const t = await getTasks();
-                setTasks(t);
+    //             const data = await getTasks();
 
-            } catch (error) {
-                setError(error.message);
+    //             setTasks(data);
 
-            } finally {
-                setLoading(false);
-            }
-        }
+    //         } catch (error) {
+    //             setError(
+    //                 'No se pudieron cargar las tareas. Verifica que el servidor esté funcionando.'
+    //             );
 
-        cargarTareas();
+    //         } finally {
+    //             setLoading(false);
+    //         }
+    //     }
 
-    }, []);
+    //     loadTasks();
+
+    // }, []);
 
 
     // useEffect(() => {
     //     localStorage.setItem('tasks', JSON.stringify(aux));
     // }, [aux]);
+
+    const loadTasks = useCallback(async () => {
+        try {
+            setLoading(true);
+            setError(null);
+
+            const data = await getTasks();
+
+            setTasks(data);
+
+        } catch (error) {
+            setError(
+                'No se pudieron cargar las tareas. Verifica que el servidor esté funcionando.'
+            );
+
+        } finally {
+            setLoading(false);
+        }
+    }, []);
+
+    useEffect(() => {
+        loadTasks();
+    }, [loadTasks]);
 
     // Cambia el estado de una tarea según su identificador.
     const handleClick = async (dat) => {
@@ -78,7 +105,8 @@ export default function useTasks() {
             );
 
         } catch (error) {
-            console.error('Error al cambiar el estado:', error);
+            //console.error('Error al cambiar el estado:', error);
+            setError('Error al cambiar el estado')
         }
     };
 
@@ -95,7 +123,8 @@ export default function useTasks() {
             );
 
         } catch (error) {
-            console.error('Error al actualizar la tarea:', error);
+            //console.error('Error al actualizar la tarea:', error);
+            setError('Error al actualizar la tarea')
         }
     };
 
@@ -117,7 +146,8 @@ export default function useTasks() {
 
         } catch (error) {
             // Manejo de errores si la promesa falla
-            console.error('Ocurrió un error:', error);
+            //console.error('Ocurrió un error:', error);
+            setError('No se pudo crear la tarea')
         }
 
     };
@@ -131,7 +161,8 @@ export default function useTasks() {
             );
 
         } catch (error) {
-            console.error('Ocurrió un error:', error);
+            //console.error('Ocurrió un error:', error);
+            setError('Ocurrió un error al eliminar la tarea')
         }
     };
 
@@ -178,6 +209,8 @@ export default function useTasks() {
         tasks,
         loading,
         error,
+
+        loadTasks
 
     };
 }
